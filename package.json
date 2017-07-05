@@ -1,0 +1,28 @@
+{
+  "name": "s3w",
+  "version": "1.0.0",
+  "description": "S3 Web",
+  "main": "main.js",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.15.3",
+    "multer": "^1.3.0",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lifezq/s3w.git"
+  },
+  "author": "Ryan",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/lifezq/s3w/issues"
+  },
+  "homepage": "https://github.com/lifezq/s3w#readme"
+}
