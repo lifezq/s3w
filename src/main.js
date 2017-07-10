@@ -14,7 +14,7 @@ app.engine("tpl", function(path, opts, fn){
 
 app.get('/', function(req, res) {
 
-	app.render('home/main.tpl',{name:'Ryan', buckets:["buk0","buk1"]}, function(err, html){
+	app.render('home/main.tpl',{buckets:["buk0","buk1"]}, function(err, html){
 
 		if(err){
 			return console.error(err);

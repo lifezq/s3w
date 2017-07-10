@@ -31,7 +31,36 @@
 
     <div class="container">
       <div class="page-header">
-        <h1><%= name  %></h1>
+
+<!-- 按钮触发模态框 -->
+<button class="btn btn-default" data-toggle="modal" data-target="#myModal">New Bucket</button>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">New Bucket</h4>
+            </div>
+            <div class="modal-body">
+               <form action="http://127.0.0.1:16000/s3/buk/new" method="post" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="sr-only" for="bucket_name">Bucket Name:</label>
+                    <input type="text" class="form-control" id="bucket_name" name="bucket_name" value="" placeholder="Please input bucket name"/>
+               </div>
+
+               <div class="alert alert-danger hidden">
+                    <p id="alert-msg">&nbsp;&nbsp;</p>
+               </div>
+               </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onClick="return s3.NewBucket();">Commit</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
       </div>
 
 <table class="table table-striped">
@@ -55,9 +84,6 @@
             <% }) %>
             </tbody>
           </table>
-
-<button type="button" class="btn btn-lg btn-success">Success</button>
-
     </div>
 
 
@@ -68,6 +94,7 @@
       </div>
     </footer>
 
+<script src="/js/s3.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 </body>
