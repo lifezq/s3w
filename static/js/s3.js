@@ -58,12 +58,15 @@ s3.BucketList = function(){
                html += "</td>"; 
 
                 html += "<td><button class='btn btn-default' data-toggle='modal' data-target='#uploadModal'>Upload</button>";
-                html += '<button type="button" class="btn btn-default" title="Delete Bucket" data-container="body" data-toggle="" data-placement="top" data-content="Can not delete this bucket" onClick="return s3.DelBucket(this,\''+rsp.items[i].bucket+'\', '+rsp.items[i].object_count+')">Delete</button>'
+                html += '<button type="button" class="btn btn-default" title="Delete Bucket"'+
+                        ""+' data-container="body" data-toggle="" data-placement="top" '+
+                        ""+' data-content="Can not delete this bucket" '+
+                        ""+' onClick="return s3.DelBucket(this,\''+rsp.items[i].bucket+
+                        '\', '+rsp.items[i].object_count+')">Delete</button>';
                 html += "</td>";
             }
 
             obj.html(html);
-            //$("[data-toggle='popover']").popover();
         }
     })
 }
