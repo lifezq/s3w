@@ -33,17 +33,18 @@
       <div class="page-header">
 
 <!-- 按钮触发模态框 -->
-<button class="btn btn-default" data-toggle="modal" data-target="#myModal">New Bucket</button>
-<!-- 模态框（Modal） -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<button class="btn btn-default" data-toggle="modal" data-target="#bukModal">New Bucket</button>
+
+<!-- New Bucket 模态框（Modal） -->
+<div class="modal fade" id="bukModal" tabindex="-1" role="dialog" aria-labelledby="bukModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel">New Bucket</h4>
+                <h4 class="modal-title" id="bukModalLabel">New Bucket</h4>
             </div>
             <div class="modal-body">
-               <form action="http://127.0.0.1:16000/s3/buk/new" method="post" class="form-horizontal" role="form">
+               <form action="#" method="post" class="form-horizontal" role="form">
                 <div class="form-group">
                     <label class="sr-only" for="bucket_name">Bucket Name:</label>
                     <input type="text" class="form-control" id="bucket_name" name="bucket_name" value="" placeholder="Please input bucket name"/>
@@ -61,32 +62,51 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
-      </div>
+
+<!-- Upload 模态框（Modal） -->
+<div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="uploadModalLabel">Upload</h4>
+            </div>
+            <div class="modal-body">
+               <form action="#" method="post" class="form-horizontal" role="form">
+                <div class="form-group">
+                    <label class="sr-only" for="bucket_name">Object file:</label>
+                    <input type="text" class="form-control" id="bucket_name" name="bucket_name" value="" placeholder="Please input bucket name"/>
+               </div>
+
+               <div class="alert alert-danger hidden">
+                    <p id="alert-msg">&nbsp;&nbsp;</p>
+               </div>
+               </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onClick="return s3.UploadBucket();">Commit</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+</div>
 
 <table class="table table-striped">
             <thead>
               <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Username</th>
+                <th>Bucket</th>
+                <th>Object Count</th>
+                <th>Object Size</th>
+                <th>AccessKeys</th>
+                <th>&nbsp;&nbsp;</th>
               </tr>
             </thead>
-            <tbody>
-            <% _.each(buckets, function(ele, idx){ %>
-              <tr>
-                <td><%= idx %></td>
-                <td><%= ele %></td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-
-            <% }) %>
+            <tbody id="buk-list">
             </tbody>
           </table>
     </div>
-
-
 
 <footer class="footer">
       <div class="container">
@@ -94,8 +114,13 @@
       </div>
     </footer>
 
-<script src="/js/s3.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
+<script src="/js/s3.js"></script>
+<script type="text/javascript">
+$(function(){
+  s3.BucketList();
+});
+</script>
 </body>
 </html>
