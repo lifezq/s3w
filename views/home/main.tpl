@@ -72,10 +72,10 @@
                 <h4 class="modal-title" id="uploadModalLabel">Upload</h4>
             </div>
             <div class="modal-body">
-               <form action="#" method="post" class="form-horizontal" role="form">
+               <form action="#" method="post" class="form-horizontal" role="form" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label class="sr-only" for="bucket_name">Object file:</label>
-                    <input type="text" class="form-control" id="bucket_name" name="bucket_name" value="" placeholder="Please input bucket name"/>
+                    <label class="sr-only" for="object_file">Object file:</label>
+                    <input type="file" class="form-control" id="object_file" name="object_file" value=""/>
                </div>
 
                <div class="alert alert-danger hidden">

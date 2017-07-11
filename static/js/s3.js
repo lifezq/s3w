@@ -101,3 +101,16 @@ s3.DelBucket = function(obj, bucket_name ,object_count){
 
     return true;
 }
+
+s3.UploadBucket = function(){
+    $.ajax({
+        url: s3.baseUrl+"s3/buk/put",
+        type:"post",
+        processData: false,
+        contentType: false,
+        data: new FormData($("#uploadModal form")[0]),
+        success:function(rsp){
+            console.log(rsp);
+        }
+    })
+}
