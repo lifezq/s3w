@@ -8,38 +8,44 @@ const port = 3000;
 
 app.use(express.static('static'));
 
+app.tplhtml = function(path){
+    return fs.readFileSync(path).toString();
+}
+
 app.engine("tpl", function(path, opts, fn){
-    fn(null, _.template(fs.readFileSync(path).toString())(opts));
+    fn(null, _.template(app.tplhtml(path))(opts));
+});
+
+app.get("/list_object/:bucket/:path", function(req, res){
+
+    app.render("home/list_object.tpl", {header: app.tplhtml('views/home/header.tpl'),
+        footer: app.tplhtml('views/home/footer.tpl'), bucket:req.params.
+        bucket,path:req.params.path}, function(err, html){
+        
+		if(err){
+			return console.error(err);
+		}
+
+		res.setHeader('Content-Type', 'text/html');
+    	res.statusCode = 200;
+    	res.write(html);
+    	res.end();
+    });
 });
 
 app.get('/', function(req, res) {
 
-    app.render('home/header.tpl',{},function(err, header){
+	app.render('home/main.tpl',{header: app.tplhtml('views/home/header.tpl'),footer: app.tplhtml('views/home/footer.tpl')}, function(err, html){
 
-        if(err){
-            return console.error(err);
-        }
+		if(err){
+			return console.error(err);
+		}
 
-        app.render('home/footer.tpl',{},function(err, footer){
-
-            if(err){
-                return console.error(err);
-            }
-        
-	            app.render('home/main.tpl',{header:header,footer:footer}, function(err, html){
-
-		            if(err){
-			            return console.error(err);
-		            }
-
-		            res.setHeader('Content-Type', 'text/html');
-    	            res.statusCode = 200;
-    	            res.write(html);
-    	            res.end();
-    	
-	            });
-	    });
-    });
+		res.setHeader('Content-Type', 'text/html');
+    	res.statusCode = 200;
+    	res.write(html);
+    	res.end();
+	});
 });
 
 
