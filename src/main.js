@@ -14,18 +14,32 @@ app.engine("tpl", function(path, opts, fn){
 
 app.get('/', function(req, res) {
 
-	app.render('home/main.tpl',{}, function(err, html){
+    app.render('home/header.tpl',{},function(err, header){
 
-		if(err){
-			return console.error(err);
-		}
+        if(err){
+            return console.error(err);
+        }
 
-		res.setHeader('Content-Type', 'text/html');
-    	res.statusCode = 200;
-    	res.write(html);
-    	res.end();
+        app.render('home/footer.tpl',{},function(err, footer){
+
+            if(err){
+                return console.error(err);
+            }
+        
+	            app.render('home/main.tpl',{header:header,footer:footer}, function(err, html){
+
+		            if(err){
+			            return console.error(err);
+		            }
+
+		            res.setHeader('Content-Type', 'text/html');
+    	            res.statusCode = 200;
+    	            res.write(html);
+    	            res.end();
     	
-	});
+	            });
+	    });
+    });
 });
 
 
