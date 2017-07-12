@@ -46,12 +46,12 @@
             <div class="modal-body">
                <form action="#" method="post" class="form-horizontal" role="form">
                 <div class="form-group">
-                    <label class="sr-only" for="bucket_name">Bucket Name:</label>
-                    <input type="text" class="form-control" id="bucket_name" name="bucket_name" value="" placeholder="Please input bucket name"/>
+                    <label class="sr-only" for="bucket">Bucket Name:</label>
+                    <input type="text" class="form-control" id="bucket" name="bucket" value="" placeholder="Please input bucket name"/>
                </div>
 
                <div class="alert alert-danger hidden">
-                    <p id="alert-msg">&nbsp;&nbsp;</p>
+                    <p class="alert-msg">&nbsp;&nbsp;</p>
                </div>
                </form>
             </div>
@@ -76,16 +76,18 @@
                 <div class="form-group">
                     <label class="sr-only" for="object_file">Object file:</label>
                     <input type="file" class="form-control" id="object_file" name="object_file" value=""/>
+                    <input type="hidden" name="bucket" id="input_bucket"/>
+                    <input type="hidden" name="path" id="input_path"/>
                </div>
 
                <div class="alert alert-danger hidden">
-                    <p id="alert-msg">&nbsp;&nbsp;</p>
+                    <p class="alert-msg">&nbsp;&nbsp;</p>
                </div>
                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onClick="return s3.UploadBucket();">Commit</button>
+                <button type="button" class="btn btn-primary" onClick="return s3.PutObject();">Commit</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
