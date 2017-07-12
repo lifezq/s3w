@@ -35,7 +35,8 @@ app.get("/list_object/:bucket/:path", function(req, res){
 
 app.get('/', function(req, res) {
 
-	app.render('home/main.tpl',{header: app.tplhtml('views/home/header.tpl'),footer: app.tplhtml('views/home/footer.tpl')}, function(err, html){
+	app.render('home/main.tpl',{header: app.tplhtml('views/home/header.tpl'),
+        footer: app.tplhtml('views/home/footer.tpl')}, function(err, html){
 
 		if(err){
 			return console.error(err);
