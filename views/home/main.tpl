@@ -82,3 +82,8 @@
     </div>
 
 <%= footer %>
+<script type="text/javascript">
+$(function(){
+  s3.BucketList();
+});
+</script>

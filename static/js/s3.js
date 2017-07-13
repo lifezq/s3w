@@ -2,14 +2,14 @@ var s3 = {
     baseUrl:"http://127.0.0.1:16000/"
 };
 
-s3.NewBucket = function(){
+s3.NewBucket = () => {
 
     var obj = $("#bukModal");
     $.ajax({
         url: s3.baseUrl+"s3/buk/new",
         type:"post",
         data: obj.find("form").serialize(),
-        success:function(rsp){
+        success:(rsp) => {
 
             if(rsp.kind=="NewBucket"){
                 obj.find(".alert-msg").html(rsp.message);
@@ -30,12 +30,12 @@ s3.NewBucket = function(){
     return false;
 }
 
-s3.BucketList = function(){
+s3.BucketList = () => {
     $.ajax({
         url: s3.baseUrl+"s3/buk/list",
         type:"get",
         dataType:"json",
-        success:function(rsp){
+        success:(rsp) => {
 
             var obj = $("#buk-list");
             if(rsp.kind!="ListBucket"){
@@ -57,7 +57,7 @@ s3.BucketList = function(){
                html += access_keys.substr(0,access_keys.length-1);
                html += "</td>"; 
 
-                html += '<td><button class="btn btn-default">file browsing</button>'+
+                html += '<td><a href="/list_object?bucket='+rsp.items[i].bucket+'&path=/" class="btn btn-default">file browsing</a>'+
                         ""+"<button class='btn btn-default' data-toggle='modal' data-target='#uploadModal' onClick=\"return s3.UpEvent(\'"+rsp.items[i].bucket+"\', \'\/\');\">Upload</button>";
                 html += '<button type="button" class="btn btn-default" title="Delete Bucket"'+
                         ""+' data-container="body" data-toggle="" data-placement="top" '+
@@ -72,11 +72,11 @@ s3.BucketList = function(){
     })
 }
 
-s3.DelBucket = function(obj, bucket ,object_count){
+s3.DelBucket = (obj, bucket ,object_count) => {
 
     if(object_count>0){
         $(obj).popover('show');
-        setTimeout(function(){
+        setTimeout(() => {
             $(obj).popover("hide");
         }, 2000);
         return false;
@@ -86,11 +86,11 @@ s3.DelBucket = function(obj, bucket ,object_count){
         url: s3.baseUrl+"s3/buk/del?bucket="+bucket,
         type:"get",
         dataType:"json",
-        success:function(rsp){
+        success: (rsp) => {
             if(rsp.kind!="DelBucket"){
                 $(obj).attr("data-content",rsp.message); 
                 $(obj).popover('show');
-                setTimeout(function(){
+                setTimeout(() => {
                     $(obj).popover("hide");
                 }, 2000);
                 return false;
@@ -103,20 +103,20 @@ s3.DelBucket = function(obj, bucket ,object_count){
     return true;
 }
 
-s3.UpEvent = function(bucket, path){
+s3.UpEvent = (bucket, path) => {
     $("#input_bucket").val(bucket);
     $("#input_path").val(path);
     return false;
 }
 
-s3.PutObject = function(){
+s3.PutObject = () => {
     $.ajax({
         url: s3.baseUrl+"s3/buk/put",
         type:"post",
         processData: false,
         contentType: false,
         data: new FormData($("#uploadModal form")[0]),
-        success:function(rsp){
+        success: (rsp) => {
             var obj = $("#uploadModal");
             if(rsp.kind=="PutBucket"){
                 obj.find(".alert-msg").html("");
@@ -133,4 +133,8 @@ s3.PutObject = function(){
     });
 
     return false;
+}
+
+s3.ListObject = (bucket, path) => {
+   console.log("bucket:"+bucket+" path:"+path);
 }

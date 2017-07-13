@@ -8,19 +8,19 @@ const port = 3000;
 
 app.use(express.static('static'));
 
-app.tplhtml = function(path){
+app.tplhtml = (path) => {
     return fs.readFileSync(path).toString();
 }
 
-app.engine("tpl", function(path, opts, fn){
+app.engine("tpl", (path, opts, fn) => {
     fn(null, _.template(app.tplhtml(path))(opts));
 });
 
-app.get("/list_object/:bucket/:path", function(req, res){
+app.get("/list_object", (req, res) => {
 
-    app.render("home/list_object.tpl", {header: app.tplhtml('views/home/header.tpl'),
-        footer: app.tplhtml('views/home/footer.tpl'), bucket:req.params.
-        bucket,path:req.params.path}, function(err, html){
+    app.render("object/list_object.tpl", {header: app.tplhtml('views/home/header.tpl'),
+        footer: app.tplhtml('views/home/footer.tpl'), bucket:req.query.bucket,
+        path:req.query.path}, (err, html) => {
         
 		if(err){
 			return console.error(err);
@@ -33,10 +33,10 @@ app.get("/list_object/:bucket/:path", function(req, res){
     });
 });
 
-app.get('/', function(req, res) {
+app.get('/', (req, res) => {
 
 	app.render('home/main.tpl',{header: app.tplhtml('views/home/header.tpl'),
-        footer: app.tplhtml('views/home/footer.tpl')}, function(err, html){
+        footer: app.tplhtml('views/home/footer.tpl')}, (err, html) => {
 
 		if(err){
 			return console.error(err);
