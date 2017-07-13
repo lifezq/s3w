@@ -115,6 +115,7 @@ s3.PutObject = () => {
         type:"post",
         processData: false,
         contentType: false,
+        timeout: 60000,
         data: new FormData($("#uploadModal form")[0]),
         success: (rsp) => {
             var obj = $("#uploadModal");
@@ -136,7 +137,6 @@ s3.PutObject = () => {
 }
 
 s3.ListObject = (bucket, path) => {
-   console.log("bucket:"+bucket+" path:"+path);
     $.ajax({
         url: s3.baseUrl+"obj/list?bucket="+bucket+"&path="+path,
         type:"get",
@@ -158,9 +158,33 @@ s3.ListObject = (bucket, path) => {
                         bucket+'&path='+rsp.items[i].path+"&oid="+
                         rsp.items[i].oid+'">'+i+'. '+rsp.items[i].object_name+
                         '</a></td><td>'+rsp.items[i].object_size+
-                        '</td><td>&nbsp;</td></tr>';
+                        '</td><td><button type="button" class="btn btn-default"'+
+                        ""+' title="Delete Object" data-container="body"'+
+                        ""+' data-toggle="" data-placement="top" data-content="Delete object error"'+
+                        ""+' onClick="return s3.DelObject(this, \''+bucket+'\',\''+path+
+                        '\',\''+rsp.items[i].oid+'\');">delete</button></td></tr>';
             }
             obj.html(html);
         }
     })
+}
+
+s3.DelObject = (obj, bucket, path, oid) => {
+    $.ajax({
+        url:s3.baseUrl+"obj/del?bucket="+bucket+"&path="+path+"&oid="+oid,
+        type:"get",
+        dataType:"json",
+        success: (rsp) => {
+            if(rsp.kind!="DelObject"){
+                $(obj).attr("data-content",rsp.message); 
+                $(obj).popover('show');
+                setTimeout(() => {
+                    $(obj).popover("hide");
+                }, 2000);
+                return;
+            }
+
+            window.location.reload();
+        }
+    }) 
 }
