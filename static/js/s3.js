@@ -1,12 +1,12 @@
 var s3 = {
-    baseUrl:"http://127.0.0.1:16000/"
+    baseUrl:"http://127.0.0.1:16000/s3/"
 };
 
 s3.NewBucket = () => {
 
     var obj = $("#bukModal");
     $.ajax({
-        url: s3.baseUrl+"s3/buk/new",
+        url: s3.baseUrl+"buk/new",
         type:"post",
         data: obj.find("form").serialize(),
         success:(rsp) => {
@@ -32,7 +32,7 @@ s3.NewBucket = () => {
 
 s3.BucketList = () => {
     $.ajax({
-        url: s3.baseUrl+"s3/buk/list",
+        url: s3.baseUrl+"buk/list",
         type:"get",
         dataType:"json",
         success:(rsp) => {
@@ -47,7 +47,7 @@ s3.BucketList = () => {
             for(var i=0;i<rsp.items.length;i++){
                html += "<tr><td>"+rsp.items[i].bucket+"</td>"; 
                html += "<td>"+rsp.items[i].object_count+"</td>"; 
-               html += "<td>"+rsp.items[i].object_size+"</td>"; 
+               html += "<td>"+rsp.items[i].object_size+"KB</td>"; 
 
                html += "<td>"; 
                 var access_keys = "";
@@ -69,7 +69,7 @@ s3.BucketList = () => {
 
             obj.html(html);
         }
-    })
+    });
 }
 
 s3.DelBucket = (obj, bucket ,object_count) => {
@@ -83,7 +83,7 @@ s3.DelBucket = (obj, bucket ,object_count) => {
     }
 
     $.ajax({
-        url: s3.baseUrl+"s3/buk/del?bucket="+bucket,
+        url: s3.baseUrl+"buk/del?bucket="+bucket,
         type:"get",
         dataType:"json",
         success: (rsp) => {
@@ -111,14 +111,14 @@ s3.UpEvent = (bucket, path) => {
 
 s3.PutObject = () => {
     $.ajax({
-        url: s3.baseUrl+"s3/buk/put",
+        url: s3.baseUrl+"buk/put",
         type:"post",
         processData: false,
         contentType: false,
         data: new FormData($("#uploadModal form")[0]),
         success: (rsp) => {
             var obj = $("#uploadModal");
-            if(rsp.kind=="PutBucket"){
+            if(rsp.kind=="PutObject"){
                 obj.find(".alert-msg").html("");
                 obj.find(".form-group").removeClass("has-error");
                 obj.find(".alert").addClass("hidden");
@@ -137,4 +137,30 @@ s3.PutObject = () => {
 
 s3.ListObject = (bucket, path) => {
    console.log("bucket:"+bucket+" path:"+path);
+    $.ajax({
+        url: s3.baseUrl+"obj/list?bucket="+bucket+"&path="+path,
+        type:"get",
+        dataType:"json",
+        success: (rsp) => {
+            var obj = $("#list-object");
+            if(rsp.kind!="ListObject"){
+                obj.html('<tr><td collapse="3">'+rsp.message+'</td></tr>');
+                return;
+            }else if(!rsp.items){
+                obj.html('<tr><td collapse="3">No Object</td></tr>');
+                return;
+            }
+
+
+            var html = "";
+            for(var i in rsp.items){
+                html += '<tr><td><a href="'+s3.baseUrl+'obj/get?bucket='+
+                        bucket+'&path='+rsp.items[i].path+"&oid="+
+                        rsp.items[i].oid+'">'+i+'. '+rsp.items[i].object_name+
+                        '</a></td><td>'+rsp.items[i].object_size+
+                        '</td><td>&nbsp;</td></tr>';
+            }
+            obj.html(html);
+        }
+    })
 }

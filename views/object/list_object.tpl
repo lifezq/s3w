@@ -5,10 +5,8 @@
 <table class="table table-striped">
             <thead>
               <tr>
-                <th>Bucket:<%= bucket %> path:<%= path %></th>
-                <th>Object Count</th>
+                <th>Object Name</th>
                 <th>Object Size</th>
-                <th>AccessKeys</th>
                 <th>&nbsp;&nbsp;</th>
               </tr>
             </thead>
