@@ -1,4 +1,5 @@
 var s3 = {
+    localUrl:"http://127.0.0.1:3000/",
     baseUrl:"http://127.0.0.1:16000/s3/"
 };
 
@@ -137,6 +138,11 @@ s3.PutObject = () => {
 }
 
 s3.ListObject = (bucket, path) => {
+
+    if(path == ""){
+        path = "/";
+    }
+
     $.ajax({
         url: s3.baseUrl+"obj/list?bucket="+bucket+"&path="+path,
         type:"get",
@@ -154,16 +160,42 @@ s3.ListObject = (bucket, path) => {
 
             var html = "";
             for(var i in rsp.items){
-                html += '<tr><td><a href="'+s3.baseUrl+'obj/get?bucket='+
-                        bucket+'&path='+rsp.items[i].path+"&oid="+
+
+                if(rsp.items[i].attr & 0x01 == 0x01){
+                    html += '<tr><td><a href="'+s3.baseUrl+'obj/get?bucket='+
+                        bucket+'&path='+path+"&oid="+
                         rsp.items[i].oid+'">'+i+'. '+rsp.items[i].object_name+
-                        '</a></td><td>'+rsp.items[i].object_size+
-                        '</td><td><button type="button" class="btn btn-default"'+
+                        '</a></td><td>-</td><td>'+rsp.items[i].object_size+'</td><td>';
+                }else{
+                    
+                    var p = path + "/";
+                    if(path == "/"){
+                        p = path;
+                    }
+
+                    html += '<tr><td><a class="btn btn-default" href="'+
+                            s3.localUrl+'list_object?bucket='+
+                            bucket+'&path='+p+rsp.items[i].object_name+'">'+
+                            rsp.items[i].object_name+'</a></td>';
+
+                    var c = 0;
+                    if(rsp.items[i].object_count){
+                        c = rsp.items[i].object_count;
+                    }
+                    html += '<td>'+c+'</td><td>'+rsp.items[i].object_size+'</td><td>'+
+                        '<button class="btn btn-default" data-toggle="modal"'+
+                        ' data-target="#uploadModal" onclick="return '+
+                        ' s3.UpEvent(\''+bucket+'\', \''+p+rsp.items[i].object_name+'\');">Upload</button>';
+                }
+
+                      html +=  '<button type="button" class="btn btn-default"'+
                         ""+' title="Delete Object" data-container="body"'+
                         ""+' data-toggle="" data-placement="top" data-content="Delete object error"'+
                         ""+' onClick="return s3.DelObject(this, \''+bucket+'\',\''+path+
                         '\',\''+rsp.items[i].oid+'\');">delete</button></td></tr>';
+         
             }
+
             obj.html(html);
         }
     })
@@ -186,5 +218,16 @@ s3.DelObject = (obj, bucket, path, oid) => {
 
             window.location.reload();
         }
-    }) 
+    });
+}
+
+s3.NewPath = (bucket, path) => {
+    $.ajax({
+        url: s3.baseUrl+"obj/new-path?bucket="+bucket+"&path="+path+"&object="+$("#input-new-path").val(),
+        type:"get",
+        dataType:"json",
+        success: (rsp) => {
+            window.location.reload();
+        }
+    })
 }
