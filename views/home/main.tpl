@@ -18,7 +18,8 @@
                <form action="#" method="post" class="form-horizontal" role="form">
                 <div class="form-group">
                     <label class="sr-only" for="bucket">Bucket Name:</label>
-                    <input type="text" class="form-control" id="bucket" name="bucket" value="" placeholder="Please input bucket name"/>
+                    <input type="text" class="form-control" id="bucket" name="bucket"
+                           value="" placeholder="Please input bucket name"/>
                </div>
 
                <div class="alert alert-danger hidden">

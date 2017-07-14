@@ -58,9 +58,12 @@ s3.BucketList = () => {
                html += access_keys.substr(0,access_keys.length-1);
                html += "</td>"; 
 
-                html += '<td><a href="/list_object?bucket='+rsp.items[i].bucket+'&path=/" class="btn btn-default">file browsing</a>'+
-                        ""+"<button class='btn btn-default' data-toggle='modal' data-target='#uploadModal' onClick=\"return s3.UpEvent(\'"+rsp.items[i].bucket+"\', \'\/\');\">Upload</button>";
-                html += '<button type="button" class="btn btn-default" title="Delete Bucket"'+
+                html += '<td><a href="/list_object?bucket='+rsp.items[i].bucket+
+                        '&path=/" class="btn btn-default">file browsing</a>'+
+                        ""+"<button class='btn btn-default' data-toggle='modal'"+
+                        " data-target='#uploadModal' onClick=\"return s3.UpEvent(\'"+
+                         rsp.items[i].bucket+"\', \'\/\');\">Upload</button>"+
+                        '<button type="button" class="btn btn-default" title="Delete Bucket"'+
                         ""+' data-container="body" data-toggle="" data-placement="top" '+
                         ""+' data-content="Can not delete this bucket" '+
                         ""+' onClick="return s3.DelBucket(this,\''+rsp.items[i].bucket+
@@ -223,7 +226,8 @@ s3.DelObject = (obj, bucket, path, oid) => {
 
 s3.NewPath = (bucket, path) => {
     $.ajax({
-        url: s3.baseUrl+"obj/new-path?bucket="+bucket+"&path="+path+"&object="+$("#input-new-path").val(),
+        url: s3.baseUrl+"obj/new-path?bucket="+bucket+"&path="+
+             path+"&object="+$("#input-new-path").val(),
         type:"get",
         dataType:"json",
         success: (rsp) => {
