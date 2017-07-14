@@ -3,7 +3,7 @@
     <div class="container">
 
       <div class="page-header" style="margin-top:0px">
-           <p><a href="javascript:void(0);" onClick="var path='<%= path %>'; path=path.substr(0, path.lastIndexOf('/')); if(path){ window.location.href='/list_object?bucket=<%= bucket %>&path='+path;}else{ window.location.href='/'; }"><b>. .</b></a></p>
+           <p><a href="javascript:void(0);" onClick="var path='<%= path %>'; if(path == '/'){ window.location.href='/';}else{ path=path.substr(0, path.lastIndexOf('/')); if(!path){ path='/'; } window.location.href='/list_object?bucket=<%= bucket %>&path='+path;}"><b>. .</b></a></p>
            <div>
            <a href="#"><%= path %></a>
            <input type="text" id="input-new-path" size="5"/>

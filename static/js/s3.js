@@ -48,7 +48,7 @@ s3.BucketList = () => {
             for(var i=0;i<rsp.items.length;i++){
                html += "<tr><td>"+rsp.items[i].bucket+"</td>"; 
                html += "<td>"+rsp.items[i].object_count+"</td>"; 
-               html += "<td>"+rsp.items[i].object_size+"KB</td>"; 
+               html += "<td>"+rsp.items[i].object_size+" KB</td>"; 
 
                html += "<td>"; 
                 var access_keys = "";
