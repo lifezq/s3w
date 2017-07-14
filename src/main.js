@@ -18,9 +18,10 @@ app.engine("tpl", (path, opts, fn) => {
 
 app.get("/list_object", (req, res) => {
 
-    app.render("object/list_object.tpl", {header: app.tplhtml('views/home/header.tpl'),
-        footer: app.tplhtml('views/home/footer.tpl'), bucket:req.query.bucket,
-        path:req.query.path}, (err, html) => {
+    app.render("object/list_object.tpl", {header: app.tplhtml('views/public/header.tpl'),
+        footer: app.tplhtml('views/public/footer.tpl'), bucket:req.query.bucket,
+        path:req.query.path,
+        uploadModal: app.tplhtml('views/public/upload.tpl')}, (err, html) => {
         
 		if(err){
 			return console.error(err);
@@ -35,8 +36,9 @@ app.get("/list_object", (req, res) => {
 
 app.get('/', (req, res) => {
 
-	app.render('home/main.tpl',{header: app.tplhtml('views/home/header.tpl'),
-        footer: app.tplhtml('views/home/footer.tpl')}, (err, html) => {
+	app.render('home/main.tpl',{header: app.tplhtml('views/public/header.tpl'),
+            footer: app.tplhtml('views/public/footer.tpl'),
+            uploadModal: app.tplhtml('views/public/upload.tpl')}, (err, html) => {
 
 		if(err){
 			return console.error(err);
