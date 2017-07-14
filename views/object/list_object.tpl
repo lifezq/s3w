@@ -12,8 +12,8 @@
            <div>
            <a href="#"><%= path %></a>
            <input type="text" id="input-new-path" size="5"/>
-           <button type="button" class="btn btn-default" onClick="return
-                  s3.NewPath('<%= bucket %>','<%= path %>');">New</button>
+           <button type="button" class="btn btn-default" onClick="
+                   return s3.NewPath('<%= bucket %>','<%= path %>');">New</button>
            </div>
       </div>
 <table class="table table-striped">

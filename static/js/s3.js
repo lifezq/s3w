@@ -201,7 +201,7 @@ s3.ListObject = (bucket, path) => {
 
             obj.html(html);
         }
-    })
+    });
 }
 
 s3.DelObject = (obj, bucket, path, oid) => {
@@ -233,5 +233,5 @@ s3.NewPath = (bucket, path) => {
         success: (rsp) => {
             window.location.reload();
         }
-    })
+    });
 }
