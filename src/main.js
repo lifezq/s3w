@@ -3,7 +3,7 @@ const app = express();
 const fs = require("fs");
 const _ = require('underscore');
 
-const hostname = '127.0.0.1';
+const hostname = 'localhost';
 const port = 3000;
 
 app.use(express.static('static'));

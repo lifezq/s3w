@@ -163,9 +163,9 @@ s3.ListObject = (bucket, path) => {
 
             var html = "";
             for(var i in rsp.items){
-
+                html += '<tr id="obj-item-'+rsp.items[i].oid+'">';
                 if(rsp.items[i].attr & 0x01 == 0x01){
-                    html += '<tr><td><a href="'+s3.baseUrl+'obj/get?bucket='+
+                    html += '<td><a href="'+s3.baseUrl+'obj/get?bucket='+
                         bucket+'&path='+path+"&oid="+
                         rsp.items[i].oid+'">'+i+'. '+rsp.items[i].object_name+
                         '</a></td><td>-</td><td>'+rsp.items[i].object_size+'</td><td>';
@@ -176,7 +176,7 @@ s3.ListObject = (bucket, path) => {
                         p = path;
                     }
 
-                    html += '<tr><td><a class="btn btn-default" href="'+
+                    html += '<td><a class="btn btn-default" href="'+
                             s3.localUrl+'list_object?bucket='+
                             bucket+'&path='+p+rsp.items[i].object_name+'">'+
                             rsp.items[i].object_name+'</a></td>';
@@ -219,7 +219,7 @@ s3.DelObject = (obj, bucket, path, oid) => {
                 return;
             }
 
-            window.location.reload();
+            $("#obj-item-"+oid).remove();
         }
     });
 }
