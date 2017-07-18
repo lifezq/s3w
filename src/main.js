@@ -54,7 +54,7 @@ app.post("/login", upload.array(),  (req, res) => {
 
             var obj = JSON.parse(rsp);
             if(obj.kind == "Login"){
-                app.session.push({name: reqObj['s3-email']});
+                app.session.push({name: obj.client_id});
             }
 
 		    res.setHeader('Content-Type', 'text/javascript');
@@ -86,7 +86,7 @@ app.get("/login", (req, res) => {
 app.get("/logout", (req, res) => {
     
     for(var i in app.session){
-        if(req.cookies.s3_adm_session == app.session[i].name){
+        if(req.cookies.s3_adm_client_id == app.session[i].name){
             app.session.splice(i, 1);
         }
     }
@@ -96,7 +96,7 @@ app.get("/logout", (req, res) => {
 
 app.get("/list_object", (req, res) => {
 
-    if(!app.validSession(req.cookies.s3_adm_session)){
+    if(!app.validSession(req.cookies.s3_adm_client_id)){
        res.redirect('/login');
         return;
     }
@@ -119,7 +119,7 @@ app.get("/list_object", (req, res) => {
 
 app.get('/', (req, res) => {
 
-    if(!app.validSession(req.cookies.s3_adm_session)){
+    if(!app.validSession(req.cookies.s3_adm_client_id)){
        res.redirect('/login');
         return;
     }

@@ -1,13 +1,16 @@
 var s3 = {
     localUrl:"http://127.0.0.1:3000/",
-    baseUrl:"http://127.0.0.1:16000/s3/"
+    baseUrl:"http://127.0.0.1:16000/s3/",
+    client_id:"",
+    access_key:""
 };
 
 s3.NewBucket = () => {
 
     var obj = $("#bukModal");
     $.ajax({
-        url: s3.baseUrl+"buk/new",
+        url: s3.baseUrl+"buk/new?client_id="+
+             s3.client_id+"&access_key="+s3.access_key,
         type:"post",
         data: obj.find("form").serialize(),
         success:(rsp) => {
@@ -254,8 +257,12 @@ s3.Login = () => {
             }
             
             obj.addClass("hidden");
+            
+            s3.client_id = rsp.client_id;
+            s3.access_key = rsp.access_key;
 
-            s3.SetCookie("s3_adm_session", $("#inputEmail").val(), 3600*1000);
+            s3.SetCookie("s3_adm_client_id", rsp.client_id, 3600*1000);
+            s3.SetCookie("s3_adm_access_key", rsp.access_key, 3600*1000);
             window.location.href="/";
         }
     });
