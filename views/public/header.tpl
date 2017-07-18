@@ -23,9 +23,12 @@
           <a class="navbar-brand" href="#">S3W</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Home</a></li>
-          </ul>
+            <p class="navbar-text pull-right">
+              Hi, administrator <a href="/logout" class="navbar-link">logout</a>
+            </p>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/">Home</a></li>
+            </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>

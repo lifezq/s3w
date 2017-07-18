@@ -54,7 +54,7 @@ app.post("/login", upload.array(),  (req, res) => {
 
             var obj = JSON.parse(rsp);
             if(obj.kind == "Login"){
-                app.session[0] = {name: reqObj['s3-email']};
+                app.session.push({name: reqObj['s3-email']});
             }
 
 		    res.setHeader('Content-Type', 'text/javascript');
@@ -81,6 +81,17 @@ app.get("/login", (req, res) => {
     	res.write(html);
     	res.end();
     });
+});
+
+app.get("/logout", (req, res) => {
+    
+    for(var i in app.session){
+        if(req.cookies.s3_adm_session == app.session[i].name){
+            app.session.splice(i, 1);
+        }
+    }
+
+    res.redirect("/");
 });
 
 app.get("/list_object", (req, res) => {
