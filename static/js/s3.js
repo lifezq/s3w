@@ -237,3 +237,34 @@ s3.NewPath = (bucket, path) => {
         }
     });
 }
+
+s3.Login = () => {
+    $.ajax({
+        url: s3.localUrl+"login",
+        type:"post",
+        data: $(".form-signin").serialize(),
+        dataType:"json",
+        success: (rsp) => {
+
+            var obj = $(".alert-danger");
+            if(rsp.kind!="Login"){
+                obj.removeClass("hidden");
+                obj.find(".alert-msg").html(rsp.message);
+                return;
+            }
+            
+            obj.addClass("hidden");
+
+            s3.SetCookie("s3_adm_session", $("#inputEmail").val(), 3600*1000);
+            window.location.href="/";
+        }
+    });
+
+    return false;
+}
+
+s3.SetCookie = (name, value, ttl) => {
+    var d = new Date();
+    d.setTime(d.getTime()+ttl);
+   document.cookie = name+"="+escape(value)+";expires="+d.toGMTString();
+}
