@@ -162,12 +162,14 @@ s3.ListObject = (bucket, path) => {
 
 
             var html = "";
+            var idx = 0;
             for(var i in rsp.items){
                 html += '<tr id="obj-item-'+rsp.items[i].oid+'">';
                 if(rsp.items[i].attr & 0x01 == 0x01){
+                    idx++;
                     html += '<td><a href="'+s3.baseUrl+'obj/get?bucket='+
                         bucket+'&path='+path+"&oid="+
-                        rsp.items[i].oid+'">'+i+'. '+rsp.items[i].object_name+
+                        rsp.items[i].oid+'">'+idx+'. '+rsp.items[i].object_name+
                         '</a></td><td>-</td><td>'+rsp.items[i].object_size+'</td><td>';
                 }else{
                     
