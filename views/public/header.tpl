@@ -24,10 +24,10 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <p class="navbar-text pull-right">
-              Hi, administrator <a href="/logout" class="navbar-link">logout</a>
+              Hi, administrator <a href="/s3w/logout" class="navbar-link">logout</a>
             </p>
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/">Home</a></li>
+                <li class="active"><a href="/s3w">Home</a></li>
             </ul>
         </div><!--/.nav-collapse -->
       </div>

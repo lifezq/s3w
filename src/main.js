@@ -1,5 +1,5 @@
 const express = require('express');
-const app = express();
+const app = express(), s3w = express();
 const fs = require("fs");
 const _ = require('underscore');
 const cookieParser = require('cookie-parser');
@@ -12,7 +12,9 @@ const querystring = require("querystring");
 const hostname = 'localhost';
 const port = 3000;
 
-app.use(express.static('static'));
+s3w.use('/s3w', app);
+
+s3w.use(express.static('static'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -91,13 +93,13 @@ app.get("/logout", (req, res) => {
         }
     }
 
-    res.redirect("/");
+    res.redirect("/s3w");
 });
 
 app.get("/list_object", (req, res) => {
 
     if(!app.validSession(req.cookies.s3_adm_client_id)){
-       res.redirect('/login');
+       res.redirect('/s3w/login');
         return;
     }
 
@@ -120,7 +122,7 @@ app.get("/list_object", (req, res) => {
 app.get('/', (req, res) => {
 
     if(!app.validSession(req.cookies.s3_adm_client_id)){
-       res.redirect('/login');
+       res.redirect('/s3w/login');
         return;
     }
 
@@ -154,6 +156,6 @@ app.validSession = (session) => {
     return false;
 }
 
-app.listen(port, hostname, () => {
+s3w.listen(port, hostname, () => {
   console.log(`server is running http://${hostname}:${port}/`);
 });

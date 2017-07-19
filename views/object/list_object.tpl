@@ -4,7 +4,7 @@
 
       <div class="page-header" style="margin-top:0px">
            <p><a href="javascript:void(0);" onClick="var path='<%= path %>';
-               if(path == '/'){ window.location.href='/';}else{ 
+               if(path == '/'){ window.location.href='/s3w';}else{ 
                path=path.substr(0, path.lastIndexOf('/'));
                if(!path){ path='/'; } window.location.href=
                    '/list_object?bucket=<%= bucket %>&path='+path;

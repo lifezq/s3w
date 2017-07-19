@@ -1,8 +1,6 @@
 var s3 = {
-    localUrl:"http://127.0.0.1:3000/",
+    localUrl:"http://127.0.0.1:3000/s3w/",
     baseUrl:"http://127.0.0.1:16000/s3/",
-    client_id:"",
-    access_key:""
 };
 
 s3.NewBucket = () => {
@@ -61,7 +59,7 @@ s3.BucketList = () => {
                html += access_keys.substr(0,access_keys.length-1);
                html += "</td>"; 
 
-                html += '<td><a href="/list_object?bucket='+rsp.items[i].bucket+
+                html += '<td><a href="/s3w/list_object?bucket='+rsp.items[i].bucket+
                         '&path=/" class="btn btn-default">file browsing</a>'+
                         ""+"<button class='btn btn-default' data-toggle='modal'"+
                         " data-target='#uploadModal' onClick=\"return s3.UpEvent(\'"+
@@ -263,7 +261,7 @@ s3.Login = () => {
 
             s3.SetCookie("s3_adm_client_id", rsp.client_id, 3600*1000);
             s3.SetCookie("s3_adm_access_key", rsp.access_key, 3600*1000);
-            window.location.href="/";
+            window.location.href=s3.localUrl;
         }
     });
 
