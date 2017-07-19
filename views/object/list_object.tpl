@@ -7,7 +7,7 @@
                if(path == '/'){ window.location.href='/s3w';}else{ 
                path=path.substr(0, path.lastIndexOf('/'));
                if(!path){ path='/'; } window.location.href=
-                   '/list_object?bucket=<%= bucket %>&path='+path;
+                   '/s3w/list_object?bucket=<%= bucket %>&path='+path;
                }"><b>. .</b></a></p>
            <div>
            <a href="#"><%= path %></a>
@@ -30,6 +30,10 @@
           </table>
     </div>
 
+    <form action="#" method="post" id="obj-get-form">
+         <input type="hidden" id="input-client-id" name="client_id"/>
+         <input type="hidden" id="input-access-key" name="access_key"/>
+    </form>
     <%= uploadModal %>
 <%= footer %>
 <script type="text/javascript">

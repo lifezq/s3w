@@ -8,7 +8,8 @@ s3.NewBucket = () => {
     var obj = $("#bukModal");
     $.ajax({
         url: s3.baseUrl+"buk/new?client_id="+
-             s3.client_id+"&access_key="+s3.access_key,
+             s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
         type:"post",
         data: obj.find("form").serialize(),
         success:(rsp) => {
@@ -34,7 +35,9 @@ s3.NewBucket = () => {
 
 s3.BucketList = () => {
     $.ajax({
-        url: s3.baseUrl+"buk/list",
+        url: s3.baseUrl+"buk/list?client_id="+
+             s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
         type:"get",
         dataType:"json",
         success:(rsp) => {
@@ -88,7 +91,9 @@ s3.DelBucket = (obj, bucket ,object_count) => {
     }
 
     $.ajax({
-        url: s3.baseUrl+"buk/del?bucket="+bucket,
+        url: s3.baseUrl+"buk/del?bucket="+bucket+"&client_id="+
+             s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
         type:"get",
         dataType:"json",
         success: (rsp) => {
@@ -116,7 +121,9 @@ s3.UpEvent = (bucket, path) => {
 
 s3.PutObject = () => {
     $.ajax({
-        url: s3.baseUrl+"buk/put",
+        url: s3.baseUrl+"buk/put?client_id="+
+             s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
         type:"post",
         processData: false,
         contentType: false,
@@ -148,7 +155,9 @@ s3.ListObject = (bucket, path) => {
     }
 
     $.ajax({
-        url: s3.baseUrl+"obj/list?bucket="+bucket+"&path="+path,
+        url: s3.baseUrl+"obj/list?bucket="+bucket+"&path="+path+"&client_id="+
+             s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
         type:"get",
         dataType:"json",
         success: (rsp) => {
@@ -168,9 +177,9 @@ s3.ListObject = (bucket, path) => {
                 html += '<tr id="obj-item-'+rsp.items[i].oid+'">';
                 if(rsp.items[i].attr & 0x01 == 0x01){
                     idx++;
-                    html += '<td><a href="'+s3.baseUrl+'obj/get?bucket='+
-                        bucket+'&path='+path+"&oid="+
-                        rsp.items[i].oid+'">'+idx+'. '+rsp.items[i].object_name+
+                    html += '<td><a href="javascript:void(0);" onClick="s3.GetObject(\''+
+                            s3.baseUrl+'obj/get?bucket='+bucket+'&path='+path+"&oid="+
+                            rsp.items[i].oid+'\')">'+idx+'. '+rsp.items[i].object_name+
                         '</a></td><td>-</td><td>'+rsp.items[i].object_size+'</td><td>';
                 }else{
                     
@@ -209,7 +218,9 @@ s3.ListObject = (bucket, path) => {
 
 s3.DelObject = (obj, bucket, path, oid) => {
     $.ajax({
-        url:s3.baseUrl+"obj/del?bucket="+bucket+"&path="+path+"&oid="+oid,
+        url:s3.baseUrl+"obj/del?bucket="+bucket+"&path="+path+"&oid="+oid+
+            "&client_id="+s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
         type:"get",
         dataType:"json",
         success: (rsp) => {
@@ -230,7 +241,9 @@ s3.DelObject = (obj, bucket, path, oid) => {
 s3.NewPath = (bucket, path) => {
     $.ajax({
         url: s3.baseUrl+"obj/new-path?bucket="+bucket+"&path="+
-             path+"&object="+$("#input-new-path").val(),
+             path+"&object="+$("#input-new-path").val()+"&client_id="+
+             s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
         type:"get",
         dataType:"json",
         success: (rsp) => {
@@ -268,8 +281,27 @@ s3.Login = () => {
     return false;
 }
 
+s3.GetObject = (uri) => {
+
+    $("#obj-get-form").attr("action", uri);
+    $("#input-client-id").val(s3.GetCookie("s3_adm_client_id"));
+    $("#input-access-key").val(s3.GetCookie("s3_adm_access_key"));
+
+    $("#obj-get-form").submit();
+}
+
 s3.SetCookie = (name, value, ttl) => {
     var d = new Date();
     d.setTime(d.getTime()+ttl);
    document.cookie = name+"="+escape(value)+";expires="+d.toGMTString();
+}
+
+s3.GetCookie = (name) => {
+    var name = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i].trim();
+        if(c.indexOf(name)==0) return c.substring(name.length,c.length);
+    }
+  return "";
 }
