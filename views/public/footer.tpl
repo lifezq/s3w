@@ -4,8 +4,8 @@
       </div>
     </footer>
 
-<script src="/js/jquery.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/s3.js"></script>
+<script src="/s3w/js/jquery.min.js"></script>
+<script src="/s3w/js/bootstrap.min.js"></script>
+<script src="/s3w/js/s3.js"></script>
 </body>
 </html>

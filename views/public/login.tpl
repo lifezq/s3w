@@ -1,10 +1,10 @@
 <%= header %>
 
-   <link href="../../css/signin.css" rel="stylesheet">
+   <link href="../../s3w/css/signin.css" rel="stylesheet">
 
     <div class="container">
 
-    <form class="form-signin" action="/login" method="post"  enctype="multipart/form-data">
+    <form class="form-signin" action="/s3w/login" method="post"  enctype="multipart/form-data">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
         <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="s3-email" required="" autofocus="">

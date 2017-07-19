@@ -14,7 +14,7 @@ const port = 3000;
 
 s3w.use('/s3w', app);
 
-s3w.use(express.static('static'));
+s3w.use('/s3w', express.static('static'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 

@@ -5,9 +5,9 @@
  <meta http-equiv="X-UA-Compatible" content="IE=edge">
  <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>S3 Web</title>
-<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/s3w/css/bootstrap.min.css" rel="stylesheet">
 <!-- Custom styles for this template -->
-    <link href="/css/sticky-footer-navbar.css" rel="stylesheet">
+    <link href="/s3w/css/sticky-footer-navbar.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-default navbar-fixed-top">
