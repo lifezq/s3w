@@ -120,6 +120,82 @@ s3.UpEvent = (bucket, path) => {
 }
 
 s3.PutObject = () => {
+
+    if(typeof FileReader != 'undefined'){
+
+        var file = $("#object_file")[0].files[0];
+        var chunkSize = 1024*1024;
+        var chunkNum = 8;
+        var blockSize = chunkSize*chunkNum;
+
+        if(file.size > blockSize){
+
+            var bucket = $("#input_bucket").val();
+            var path = $("#input_path").val();
+            var offset = 0;
+            var fileSize = file.size;
+            var block = Math.ceil(fileSize/blockSize);
+    
+            for (var b=0;b<block;b++){
+    
+                var breaked = false;
+                for (var c=0;c<chunkNum;c++){
+    
+                    offset = blockSize*b+(c*chunkSize);
+                    var cutset = offset+chunkSize;
+                    if(cutset>=fileSize){
+                        cutset = fileSize;
+                        breaked = true;
+                    }
+    
+                    var formData = new FormData();
+                    formData.append("bucket", bucket);
+                    formData.append("path", path);
+                    formData.append("filename", file.name);
+                    formData.append("block", b);
+                    formData.append("chunk", c);
+                    formData.append("data", file.slice(offset,cutset));
+                    formData.append("size", fileSize);
+                    formData.append("block_ider", block);
+                    formData.append("chunk_size", chunkSize);
+                    formData.append("meta_size", blockSize >> 1 );
+    
+                    $.ajax({
+                    url: s3.baseUrl+"buk/multi-put?client_id="+
+                        s3.GetCookie("s3_adm_client_id")+
+                        "&access_key="+s3.GetCookie("s3_adm_access_key"),
+                    type:"post",
+                    async:false,
+                    processData: false,
+                    contentType: false,
+                    timeout: 10000,
+                    data: formData,
+                    success: (rsp) => {
+                        var obj = $("#uploadModal");
+                        if(rsp.kind=="MultiPutObject"){
+                            obj.find(".alert-msg").html("");
+                            obj.find(".form-group").removeClass("has-error");
+                            obj.find(".alert").addClass("hidden");
+                            obj.modal("hide");
+                            return;
+                        }
+    
+                        obj.find(".alert-msg").html(rsp.message);
+                        obj.find(".form-group").addClass("has-error");
+                        obj.find(".alert").removeClass("hidden");
+                    }
+                    });
+    
+                    if(breaked){
+                        break;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
+
     $.ajax({
         url: s3.baseUrl+"buk/put?client_id="+
              s3.GetCookie("s3_adm_client_id")+
@@ -127,7 +203,7 @@ s3.PutObject = () => {
         type:"post",
         processData: false,
         contentType: false,
-        timeout: 60000,
+        timeout: 10000,
         data: new FormData($("#uploadModal form")[0]),
         success: (rsp) => {
             var obj = $("#uploadModal");
@@ -147,6 +223,7 @@ s3.PutObject = () => {
 
     return false;
 }
+
 
 s3.ListObject = (bucket, path) => {
 
