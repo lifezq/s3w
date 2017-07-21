@@ -367,7 +367,7 @@ s3.GetObject = (uri) => {
 s3.SetCookie = (name, value, ttl) => {
     var d = new Date();
     d.setTime(d.getTime()+ttl);
-   document.cookie = name+"="+escape(value)+";expires="+d.toGMTString();
+   document.cookie = name+"="+encodeURIComponent(value)+";expires="+d.toGMTString();
 }
 
 s3.GetCookie = (name) => {
@@ -375,7 +375,8 @@ s3.GetCookie = (name) => {
     var ca = document.cookie.split(';');
     for(var i=0; i<ca.length; i++) {
         var c = ca[i].trim();
-        if(c.indexOf(name)==0) return c.substring(name.length,c.length);
+
+        if(c.indexOf(name)==0) return encodeURIComponent(c.substring(name.length,c.length));
     }
   return "";
 }
