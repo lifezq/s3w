@@ -128,7 +128,7 @@ s3.PutObject = () => {
         var chunkNum = 8;
         var blockSize = chunkSize*chunkNum;
 
-        if(file.size > blockSize){
+        if(file.size > chunkSize){
 
             var bucket = $("#input_bucket").val();
             var path = $("#input_path").val();
@@ -158,7 +158,7 @@ s3.PutObject = () => {
                     formData.append("size", fileSize);
                     formData.append("block_ider", block);
                     formData.append("chunk_size", chunkSize);
-                    formData.append("meta_size", blockSize >> 1 );
+                    formData.append("meta_size", blockSize >> 0x01 );
     
                     $.ajax({
                     url: s3.baseUrl+"buk/multi-put?client_id="+
@@ -345,9 +345,6 @@ s3.Login = () => {
             }
             
             obj.addClass("hidden");
-            
-            s3.client_id = rsp.client_id;
-            s3.access_key = rsp.access_key;
 
             s3.SetCookie("s3_adm_client_id", rsp.client_id, 3600*1000);
             s3.SetCookie("s3_adm_access_key", rsp.access_key, 3600*1000);
