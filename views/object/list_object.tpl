@@ -33,6 +33,7 @@
     <form action="#" method="post" id="obj-get-form">
          <input type="hidden" id="input-client-id" name="client_id"/>
          <input type="hidden" id="input-access-key" name="access_key"/>
+         <input type="hidden" id="input-obj-down" name="down"/>
     </form>
     <%= uploadModal %>
 <%= footer %>

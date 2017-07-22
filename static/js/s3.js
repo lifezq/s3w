@@ -256,8 +256,14 @@ s3.ListObject = (bucket, path) => {
                     idx++;
                     html += '<td><a href="javascript:void(0);" onClick="s3.GetObject(\''+
                             s3.baseUrl+'obj/get?bucket='+bucket+'&path='+path+"&oid="+
-                            rsp.items[i].oid+'\')">'+idx+'. '+rsp.items[i].object_name+
+                            rsp.items[i].oid+'\',0)">'+idx+'. '+rsp.items[i].object_name+
                         '</a></td><td>-</td><td>'+rsp.items[i].object_size+'</td><td>';
+                    html += '<button type="button" class="btn btn-default" title="Download Object"'+
+                            ' data-container="body" data-toggle="" data-placement="top"'+
+                            ' data-content="Download object error" onClick="s3.GetObject(\''+
+                            s3.baseUrl+'obj/get?bucket='+bucket+'&path='+path+"&oid="+
+                            rsp.items[i].oid+'\',1)">Down</button>';
+
                 }else{
                     
                     var p = path + "/";
@@ -279,12 +285,11 @@ s3.ListObject = (bucket, path) => {
                         ' data-target="#uploadModal" onclick="return '+
                         ' s3.UpEvent(\''+bucket+'\', \''+p+rsp.items[i].object_name+'\');">Upload</button>';
                 }
-
-                      html +=  '<button type="button" class="btn btn-default"'+
-                        ""+' title="Delete Object" data-container="body"'+
-                        ""+' data-toggle="" data-placement="top" data-content="Delete object error"'+
-                        ""+' onClick="return s3.DelObject(this, \''+bucket+'\',\''+path+
-                        '\',\''+rsp.items[i].oid+'\');">delete</button></td></tr>';
+                    html +=  '<button type="button" class="btn btn-default"'+
+                            ' title="Delete Object" data-container="body"'+
+                            ' data-toggle="" data-placement="top" data-content="Delete object error"'+
+                            ' onClick="return s3.DelObject(this, \''+bucket+'\',\''+path+
+                            '\',\''+rsp.items[i].oid+'\');">delete</button></td></tr>';
          
             }
 
@@ -355,9 +360,10 @@ s3.Login = () => {
     return false;
 }
 
-s3.GetObject = (uri) => {
+s3.GetObject = (uri, down) => {
 
     $("#obj-get-form").attr("action", uri);
+    $("#input-obj-down").val(down);
     $("#input-client-id").val(s3.GetCookie("s3_adm_client_id"));
     $("#input-access-key").val(s3.GetCookie("s3_adm_access_key"));
 
