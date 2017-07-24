@@ -134,8 +134,8 @@ s3.PutObject = () => {
 
         if(file.size > chunkSize){
 
-            var bucket = $("#input_bucket").val();
-            var path = $("#input_path").val();
+            var bucket = $(".input_bucket").val();
+            var path = $(".input_path").val();
             var offset = 0;
             var fileSize = file.size;
             var block = Math.ceil(fileSize/blockSize);
