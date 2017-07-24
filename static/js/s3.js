@@ -67,6 +67,9 @@ s3.BucketList = () => {
                         ""+"<button class='btn btn-default' data-toggle='modal'"+
                         " data-target='#uploadModal' onClick=\"return s3.UpEvent(\'"+
                          rsp.items[i].bucket+"\', \'\/\');\">Upload</button>"+
+                        "<button class='btn btn-default' data-toggle='modal'"+
+                        " data-target='#accessModal' onClick=\"return s3.UpEvent(\'"+
+                         rsp.items[i].bucket+"\', \'\/\');\">Access Crontol</button>"+
                         '<button type="button" class="btn btn-default" title="Delete Bucket"'+
                         ""+' data-container="body" data-toggle="" data-placement="top" '+
                         ""+' data-content="Can not delete this bucket" '+
@@ -114,13 +117,14 @@ s3.DelBucket = (obj, bucket ,object_count) => {
 }
 
 s3.UpEvent = (bucket, path) => {
-    $("#input_bucket").val(bucket);
-    $("#input_path").val(path);
+    $(".input_bucket").val(bucket);
+    $(".input_path").val(path);
     return false;
 }
 
 s3.PutObject = () => {
 
+    var obj = $("#uploadModal");
     if(typeof FileReader != 'undefined'){
 
         var file = $("#object_file")[0].files[0];
@@ -171,18 +175,11 @@ s3.PutObject = () => {
                     timeout: 10000,
                     data: formData,
                     success: (rsp) => {
-                        var obj = $("#uploadModal");
-                        if(rsp.kind=="MultiPutObject"){
-                            obj.find(".alert-msg").html("");
-                            obj.find(".form-group").removeClass("has-error");
-                            obj.find(".alert").addClass("hidden");
-                            obj.modal("hide");
-                            return;
+                        if(rsp.kind!="MultiPutObject"){
+                            obj.find(".alert-msg").html(rsp.message);
+                            obj.find(".form-group").addClass("has-error");
+                            obj.find(".alert").removeClass("hidden");
                         }
-    
-                        obj.find(".alert-msg").html(rsp.message);
-                        obj.find(".form-group").addClass("has-error");
-                        obj.find(".alert").removeClass("hidden");
                     }
                     });
     
@@ -192,6 +189,10 @@ s3.PutObject = () => {
                 }
             }
 
+            obj.find(".alert-msg").html("");
+            obj.find(".form-group").removeClass("has-error");
+            obj.find(".alert").addClass("hidden");
+            obj.modal("hide");
             return false;
         }
     }
@@ -204,9 +205,8 @@ s3.PutObject = () => {
         processData: false,
         contentType: false,
         timeout: 10000,
-        data: new FormData($("#uploadModal form")[0]),
+        data: new FormData(obj.find("form")[0]),
         success: (rsp) => {
-            var obj = $("#uploadModal");
             if(rsp.kind=="PutObject"){
                 obj.find(".alert-msg").html("");
                 obj.find(".form-group").removeClass("has-error");
@@ -334,6 +334,36 @@ s3.NewPath = (bucket, path) => {
     });
 }
 
+s3.WhiteList = () => {
+
+    var obj = $("#accessModal");
+    $.ajax({
+        url: s3.baseUrl+"buk/ac?client_id="+s3.GetCookie("s3_adm_client_id")+
+            "&access_key="+s3.GetCookie("s3_adm_access_key"),
+        type:"post",
+        dataType:"json",
+        processData: false,
+        contentType: false,
+        timeout: 10000,
+        data: new FormData(obj.find("form")[0]),
+        success: (rsp) => {
+            if(rsp.kind=="AccessControl"){
+                obj.find(".alert-msg").html("");
+                obj.find(".form-group").removeClass("has-error");
+                obj.find(".alert").addClass("hidden");
+                obj.modal("hide");
+                return;
+            }
+
+            obj.find(".alert-msg").html(rsp.message);
+            obj.find(".form-group").addClass("has-error");
+            obj.find(".alert").removeClass("hidden");
+        }
+    });
+
+    return false;
+}
+
 s3.Login = () => {
     $.ajax({
         url: s3.localUrl+"login",
@@ -351,8 +381,9 @@ s3.Login = () => {
             
             obj.addClass("hidden");
 
-            s3.SetCookie("s3_adm_client_id", rsp.client_id, 3600*1000);
-            s3.SetCookie("s3_adm_access_key", rsp.access_key, 3600*1000);
+            s3.SetCookie("s3_adm_client_id", rsp.client_id, 3600*1000, "/s3w");
+            s3.SetCookie("s3_adm_access_key", rsp.access_key, 3600*1000,"/s3w");
+
             window.location.href=s3.localUrl;
         }
     });
@@ -370,10 +401,10 @@ s3.GetObject = (uri, down) => {
     $("#obj-get-form").submit();
 }
 
-s3.SetCookie = (name, value, ttl) => {
+s3.SetCookie = (name, value, ttl, path) => {
     var d = new Date();
     d.setTime(d.getTime()+ttl);
-    document.cookie = name+"="+encodeURIComponent(value)+";expires="+d.toGMTString();
+    document.cookie = name+"="+encodeURIComponent(value)+";expires="+d.toGMTString()+";path="+path;
 }
 
 s3.GetCookie = (name) => {

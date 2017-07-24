@@ -37,7 +37,8 @@
 
 <%= uploadModal %>
 
-</div>
+<%= accessModal %>
+
 
 </div>
 
