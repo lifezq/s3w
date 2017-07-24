@@ -334,7 +334,7 @@ s3.NewPath = (bucket, path) => {
     });
 }
 
-s3.WhiteList = () => {
+s3.AccessControl = () => {
 
     var obj = $("#accessModal");
     $.ajax({

@@ -24,7 +24,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onClick="return s3.WhiteList();">Commit</button>
+                <button type="button" class="btn btn-primary" onClick="return s3.AccessControl();">Commit</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
