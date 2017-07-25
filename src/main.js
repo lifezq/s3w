@@ -88,7 +88,7 @@ app.get("/login", (req, res) => {
 app.get("/logout", (req, res) => {
     
     for(var i in app.session){
-        if(req.cookies.s3_adm_client_id == app.session[i].name){
+        if(req.cookies.s3_client_id == app.session[i].name){
             app.session.splice(i, 1);
         }
     }
@@ -98,7 +98,7 @@ app.get("/logout", (req, res) => {
 
 app.get("/list_object", (req, res) => {
 
-    if(!app.validSession(req.cookies.s3_adm_client_id)){
+    if(!app.validSession(req.cookies.s3_client_id)){
        res.redirect('/s3w/login');
         return;
     }
@@ -121,7 +121,7 @@ app.get("/list_object", (req, res) => {
 
 app.get('/', (req, res) => {
 
-    if(!app.validSession(req.cookies.s3_adm_client_id)){
+    if(!app.validSession(req.cookies.s3_client_id)){
        res.redirect('/s3w/login');
         return;
     }
