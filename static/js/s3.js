@@ -1,6 +1,7 @@
 var s3 = {
     localUrl:"http://127.0.0.1:3000/s3w/",
     baseUrl:"http://127.0.0.1:16000/s3/",
+    updating:false,
 };
 
 s3.NewBucket = () => {
@@ -119,12 +120,20 @@ s3.DelBucket = (obj, bucket ,object_count) => {
 s3.UpEvent = (bucket, path) => {
     $(".input_bucket").val(bucket);
     $(".input_path").val(path);
+    s3.updating = false;
+    $("#uploadModal .btn-primary").attr("disabled", false);
     return false;
 }
 
 s3.PutObject = () => {
 
+    if(s3.updating) return false;
+    s3.updating = true;
+
     var obj = $("#uploadModal");
+    obj.find(".modal-title").html("Updating...");
+    obj.find(".btn-primary").attr("disabled", true);
+
     if(typeof FileReader != 'undefined'){
 
         var file = $("#object_file")[0].files[0];
@@ -155,10 +164,11 @@ s3.PutObject = () => {
                     var data = file.slice(offset,cutset);
                     var reader = new FileReader();
                     reader.readAsArrayBuffer(data);
+
                     reader.b = b;
                     reader.c = c;
                     reader.data = data;
-                    reader.onload=function(){
+                    reader.onload = function(){
     
                         var formData = new FormData();
                         formData.append("bucket", bucket);
@@ -184,7 +194,9 @@ s3.PutObject = () => {
                         h.update(String(chunkSize));
     
                         formData.append("sign", h.hex());
-    
+   
+                        var this_block = this.b;
+                        var this_chunk = this.c;
                         $.ajax({
                         url: s3.baseUrl+"buk/multi-put?client_id="+
                             s3.GetCookie("s3_client_id")+
@@ -196,10 +208,23 @@ s3.PutObject = () => {
                         timeout: 10000,
                         data: formData,
                         success: (rsp) => {
+
                             if(rsp.kind!="MultiPutObject"){
                                 obj.find(".alert-msg").html(rsp.message);
                                 obj.find(".form-group").addClass("has-error");
                                 obj.find(".alert").removeClass("hidden");
+                                return;
+                            }
+
+                            if((this_block*blockSize + (this_chunk+1)*chunkSize) > fileSize){
+                                obj.find(".alert-msg").html("");
+                                obj.find(".form-group").removeClass("has-error");
+                                obj.find(".alert").addClass("hidden");
+                                obj.modal("hide");
+
+                                s3.updating = false;
+                                obj.find(".modal-title").html("Update");
+                                obj.find(".btn-primary").attr("disabled", false);
                             }
                         }
                         });
@@ -211,10 +236,6 @@ s3.PutObject = () => {
                 }
             }
 
-            obj.find(".alert-msg").html("");
-            obj.find(".form-group").removeClass("has-error");
-            obj.find(".alert").addClass("hidden");
-            obj.modal("hide");
             return false;
         }
     }
@@ -224,6 +245,7 @@ s3.PutObject = () => {
              s3.GetCookie("s3_client_id")+
             "&access_key="+s3.GetCookie("s3_access_key"),
         type:"post",
+        async:false,
         processData: false,
         contentType: false,
         timeout: 10000,
@@ -243,6 +265,9 @@ s3.PutObject = () => {
         }
     });
 
+    s3.updating = false;
+    obj.find(".modal-title").html("Update");
+    obj.find(".btn-primary").attr("disabled", false);
     return false;
 }
 
