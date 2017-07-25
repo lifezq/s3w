@@ -228,8 +228,8 @@ s3.PutObject = () => {
                             }
                         }
                         });
-    
                     }
+
                     if(breaked){
                         break;
                     }
@@ -444,7 +444,7 @@ s3.GetObject = (uri, down) => {
     $("#obj-get-form").attr("action", uri);
     $("#input-obj-down").val(down);
     $("#input-client-id").val(s3.GetCookie("s3_client_id"));
-    $("#input-access-key").val(s3.GetCookie("s3_access_key"));
+    $("#input-access-key").val(decodeURIComponent(s3.GetCookie("s3_access_key")));
 
     $("#obj-get-form").submit();
 }
