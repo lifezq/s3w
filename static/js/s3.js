@@ -217,7 +217,7 @@ s3.PutObject = () => {
                                 return;
                             }
 
-                            if((this_block*blockSize + (this_chunk+1)*chunkSize) > fileSize){
+                            if((this_block*blockSize + (this_chunk+1)*chunkSize) >= fileSize){
                                 obj.find(".alert-msg").html("");
                                 obj.find(".form-group").removeClass("has-error");
                                 obj.find(".alert").addClass("hidden");
