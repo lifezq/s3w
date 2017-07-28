@@ -377,7 +377,9 @@ s3.NewPath = (bucket, path) => {
         type:"get",
         dataType:"json",
         success: (rsp) => {
-            window.location.reload();
+            if(rsp.kind=="NewPath"){
+                window.location.reload();
+            }
         }
     });
 }
