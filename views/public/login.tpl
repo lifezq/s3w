@@ -4,12 +4,12 @@
 
     <div class="container">
 
-    <form class="form-signin" action="/s3w/login" method="post"  enctype="multipart/form-data">
+    <form class="form-signin" action="#" method="post"  enctype="multipart/form-data">
         <h2 class="form-signin-heading">Please sign in</h2>
         <label for="inputEmail" class="sr-only">Email address</label>
-        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="s3-email" required="" autofocus="">
+        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="s3-email" required="required" autofocus="autofocus">
         <label for="inputPassword" class="sr-only">Password</label>
-        <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="s3-password" required="">
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="s3-password" required="required" autofocus="autofocus">
 
         <div class="alert alert-danger hidden">
             <p class="alert-msg">&nbsp;&nbsp;</p>

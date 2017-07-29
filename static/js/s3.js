@@ -62,7 +62,9 @@ s3.BucketList = () => {
                 }
                html += access_keys.substr(0,access_keys.length-1);
                html += '<input type="hidden" id="buk-wl-'+rsp.items[i].bucket+
-                        '" value="'+(rsp.items[i].white_list || '')+'"/></td>'; 
+                        '" value="'+(rsp.items[i].white_list || '')+'"/>'+
+                        '<input type="hidden" id="buk-img-'+rsp.items[i].bucket+
+                        '" value="'+(rsp.items[i].img_w||0)+'_'+(rsp.items[i].img_h||0)+'"/></td>'; 
 
                 html += '<td><a href="/s3w/list_object?bucket='+rsp.items[i].bucket+
                         '&path=/" class="btn btn-default">file browsing</a>'+
@@ -70,8 +72,8 @@ s3.BucketList = () => {
                         " data-target='#uploadModal' onClick=\"return s3.UpEvent(\'"+
                          rsp.items[i].bucket+"\', \'\/\');\">Upload</button>"+
                         "<button class='btn btn-default' data-toggle='modal'"+
-                        " data-target='#accessModal' onClick=\"return s3.ACEvent(\'"+
-                         rsp.items[i].bucket+"\', \'\/\');\">Access Crontol</button>"+
+                        " data-target='#settingModal' onClick=\"return s3.ACEvent(\'"+
+                         rsp.items[i].bucket+"\', \'\/\');\">Setting</button>"+
                         '<button type="button" class="btn btn-default" title="Delete Bucket"'+
                         ""+' data-container="body" data-toggle="" data-placement="top" '+
                         ""+' data-content="Can not delete this bucket" '+
@@ -142,7 +144,7 @@ s3.PutObject = () => {
         var chunkNum = 8;
         var blockSize = chunkSize*chunkNum;
 
-        if(file.size > chunkSize){
+        if(file.size > chunkSize && file.type.substr(0, 5) != "image"){
 
             var bucket = $(".input_bucket").val();
             var path = $(".input_path").val();
@@ -388,14 +390,17 @@ s3.ACEvent = (bucket, path) => {
     $(".input_bucket").val(bucket);
     $(".input_path").val(path);
     $("#input_wl").val($("#buk-wl-"+bucket).val().split(",").join("\r\n"));
+    var wh = $("#buk-img-"+bucket).val().split("_");
+    $("#input-img-w").val(wh[0]);
+    $("#input-img-h").val(wh[1]);
     return false;
 }
 
-s3.AccessControl = () => {
+s3.Setting = () => {
 
-    var obj = $("#accessModal");
+    var obj = $("#settingModal");
     $.ajax({
-        url: s3.baseUrl+"buk/ac?client_id="+s3.GetCookie("s3_client_id")+
+        url: s3.baseUrl+"buk/set?client_id="+s3.GetCookie("s3_client_id")+
             "&access_key="+s3.GetCookie("s3_access_key"),
         type:"post",
         dataType:"json",
@@ -404,7 +409,7 @@ s3.AccessControl = () => {
         timeout: 10000,
         data: new FormData(obj.find("form")[0]),
         success: (rsp) => {
-            if(rsp.kind=="AccessControl"){
+            if(rsp.kind=="Setting"){
                 obj.find(".alert-msg").html("");
                 obj.find(".form-group").removeClass("has-error");
                 obj.find(".alert").addClass("hidden");
@@ -419,10 +424,15 @@ s3.AccessControl = () => {
     });
 
     $("#buk-wl-"+$(".input_bucket").val()).val($("#input_wl").val().split("\r\n").join(","));
+    $("#buk-img-"+$(".input_bucket").val()).val($("#input-img-w").val()+"_"+$("#input-img-h").val());
     return false;
 }
 
 s3.Login = () => {
+
+    if(!$("#inputEmail").val()) return false;
+    if(!$("#inputPassword").val()) return false;
+
     $.ajax({
         url: s3.localUrl+"login",
         type:"post",

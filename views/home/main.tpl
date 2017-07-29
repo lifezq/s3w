@@ -37,7 +37,7 @@
 
 <%= uploadModal %>
 
-<%= accessModal %>
+<%= settingModal %>
 
 
 </div>

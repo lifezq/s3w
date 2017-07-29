@@ -129,7 +129,7 @@ app.get('/', (req, res) => {
 	app.render('home/main.tpl',{header: app.tplhtml('views/public/header.tpl'),
             footer: app.tplhtml('views/public/footer.tpl'),
             uploadModal: app.tplhtml('views/public/upload.tpl'),
-            accessModal: app.tplhtml('views/public/access.tpl')}, (err, html) => {
+            settingModal: app.tplhtml('views/public/setting.tpl')}, (err, html) => {
 
 		if(err){
 			return console.error(err);
