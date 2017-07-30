@@ -137,6 +137,10 @@ s3.PutObject = () => {
     obj.find(".modal-title").html("Updating...");
     obj.find(".btn-primary").attr("disabled", true);
     
+    var offset = 0;
+    var chunkSize = 1024*1024;
+    var chunkNum = 8;
+    var blockSize = chunkSize*chunkNum;
     var bucket = $(".input_bucket").val();
     var path = $(".input_path").val();
     var files = $("#object_file")[0].files;
@@ -145,7 +149,10 @@ s3.PutObject = () => {
 
         var file = files[fi];
     
-        if(typeof FileReader == 'undefined' || file.size <= chunkSize || file.type.substr(0, 5) == "image"){
+        var fileSize = file.size;
+        var block = Math.ceil(fileSize/blockSize);
+
+        if(typeof FileReader == 'undefined' || fileSize <= chunkSize || file.type.substr(0, 5) == "image"){
     
             var formData = new FormData();
             formData.append("bucket", bucket);
@@ -180,13 +187,6 @@ s3.PutObject = () => {
             continue;
         }
 
-        var offset = 0;
-        var chunkSize = 1024*1024;
-        var chunkNum = 8;
-        var blockSize = chunkSize*chunkNum;
-        var fileSize = file.size;
-        var block = Math.ceil(fileSize/blockSize);
-
         for (var b=0;b<block;b++){
 
             var breaked = false;
@@ -201,35 +201,39 @@ s3.PutObject = () => {
                 var data = file.slice(offset,cutset);
                 var reader = new FileReader();
                 reader.readAsArrayBuffer(data);
+                reader.data = data;
                 reader.b = b;
                 reader.c = c;
-                reader.data = data;
-                reader.onload = function(){
+                reader.filename = file.name;
+                reader.fileSize = fileSize;
+                reader.formData = new FormData();
 
-                    var formData = new FormData();
-                    formData.append("bucket", bucket);
-                    formData.append("path", path);
-                    formData.append("filename", file.name);
-                    formData.append("block", this.b);
-                    formData.append("chunk", this.c);
-                    formData.append("data", this.data);
-                    formData.append("size", fileSize);
-                    formData.append("block_ider", block);
-                    formData.append("chunk_size", chunkSize);
-                    formData.append("meta_size", blockSize >> 0x01 );
+                reader.onload = function(){
+    
+                    this.formData.append("bucket", bucket);
+                    this.formData.append("path", path);
+                    this.formData.append("filename", this.filename);
+                    this.formData.append("block", this.b);
+                    this.formData.append("chunk", this.c);
+                    this.formData.append("data", this.data);
+                    this.formData.append("size", this.fileSize);
+                    this.formData.append("block_ider", block);
+                    this.formData.append("chunk_size", chunkSize);
+                    this.formData.append("meta_size", blockSize >> 0x01 );
 
                     var h = sha256.hmac.create(decodeURIComponent(s3.GetCookie("s3_secret_key")));
                     h.update(bucket);
                     h.update(path);
-                    h.update(file.name);
+                    h.update(this.filename);
                     h.update(String(this.b));
                     h.update(String(this.c));
                     h.update(this.result);
-                    h.update(String(fileSize));
+                    h.update(String(this.fileSize));
                     h.update(String(block));
                     h.update(String(chunkSize));
-
-                    formData.append("sign", h.hex());
+    
+                    this.formData.append("sign", h.hex());
+                   
 
                     var this_block = this.b;
                     var this_chunk = this.c;
@@ -242,7 +246,7 @@ s3.PutObject = () => {
                     processData: false,
                     contentType: false,
                     timeout: 10000,
-                    data: formData,
+                    data: this.formData,
                     success: (rsp) => {
                         if(rsp.kind!="MultiPutObject"){
                             obj.find(".alert-msg").html(rsp.message);
@@ -250,6 +254,7 @@ s3.PutObject = () => {
                             obj.find(".alert").removeClass("hidden");
                             return;
                         }
+
                         if((this_block*blockSize + (this_chunk+1)*chunkSize) >= fileSize){
                             obj.find(".alert-msg").html("");
                             obj.find(".form-group").removeClass("has-error");
@@ -262,6 +267,7 @@ s3.PutObject = () => {
                     }
                     });
                 }
+
                 if(breaked){
                     break;
                 }
