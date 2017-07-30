@@ -206,6 +206,7 @@ s3.PutObject = () => {
                 reader.c = c;
                 reader.filename = file.name;
                 reader.fileSize = fileSize;
+                reader.block = block;
                 reader.formData = new FormData();
 
                 reader.onload = function(){
@@ -217,7 +218,7 @@ s3.PutObject = () => {
                     this.formData.append("chunk", this.c);
                     this.formData.append("data", this.data);
                     this.formData.append("size", this.fileSize);
-                    this.formData.append("block_ider", block);
+                    this.formData.append("block_ider", this.block);
                     this.formData.append("chunk_size", chunkSize);
                     this.formData.append("meta_size", blockSize >> 0x01 );
 
@@ -229,7 +230,7 @@ s3.PutObject = () => {
                     h.update(String(this.c));
                     h.update(this.result);
                     h.update(String(this.fileSize));
-                    h.update(String(block));
+                    h.update(String(this.block));
                     h.update(String(chunkSize));
     
                     this.formData.append("sign", h.hex());
