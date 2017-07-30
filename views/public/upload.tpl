@@ -11,7 +11,7 @@
                <form action="#" method="post" class="form-horizontal" role="form" enctype="multipart/form-data">
                 <div class="form-group">
                     <label class="sr-only" for="object_file">Object file:</label>
-                    <input type="file" class="form-control" id="object_file" name="object_file" value=""/>
+                    <input type="file" class="form-control" id="object_file" name="object_file" value="" multiple="multiple"/>
                     <input type="hidden" name="bucket" class="input_bucket"/>
                     <input type="hidden" name="path" class="input_path"/>
                </div>

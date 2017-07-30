@@ -136,144 +136,144 @@ s3.PutObject = () => {
     var obj = $("#uploadModal");
     obj.find(".modal-title").html("Updating...");
     obj.find(".btn-primary").attr("disabled", true);
+    
+    var bucket = $(".input_bucket").val();
+    var path = $(".input_path").val();
+    var files = $("#object_file")[0].files;
 
-    if(typeof FileReader != 'undefined'){
+    for(var fi=0;fi<files.length;fi++){
 
-        var file = $("#object_file")[0].files[0];
+        var file = files[fi];
+    
+        if(typeof FileReader == 'undefined' || file.size <= chunkSize || file.type.substr(0, 5) == "image"){
+    
+            var formData = new FormData();
+            formData.append("bucket", bucket);
+            formData.append("path", path);
+            formData.append("object_file", file);
+        
+            $.ajax({
+                url: s3.baseUrl+"buk/put?client_id="+
+                     s3.GetCookie("s3_client_id")+
+                    "&access_key="+s3.GetCookie("s3_access_key"),
+                type:"post",
+                async:false,
+                processData: false,
+                contentType: false,
+                timeout: 10000,
+                data: formData,
+                success: (rsp) => {
+                    if(rsp.kind=="PutObject"){
+                        obj.find(".alert-msg").html("");
+                        obj.find(".form-group").removeClass("has-error");
+                        obj.find(".alert").addClass("hidden");
+                        obj.modal("hide");
+                        return;
+                    }
+        
+                    obj.find(".alert-msg").html(rsp.message);
+                    obj.find(".form-group").addClass("has-error");
+                    obj.find(".alert").removeClass("hidden");
+                }
+            });
+        
+            continue;
+        }
+
+        var offset = 0;
         var chunkSize = 1024*1024;
         var chunkNum = 8;
         var blockSize = chunkSize*chunkNum;
+        var fileSize = file.size;
+        var block = Math.ceil(fileSize/blockSize);
 
-        if(file.size > chunkSize && file.type.substr(0, 5) != "image"){
+        for (var b=0;b<block;b++){
 
-            var bucket = $(".input_bucket").val();
-            var path = $(".input_path").val();
-            var offset = 0;
-            var fileSize = file.size;
-            var block = Math.ceil(fileSize/blockSize);
-    
-            for (var b=0;b<block;b++){
-    
-                var breaked = false;
-                for (var c=0;c<chunkNum;c++){
-    
-                    offset = blockSize*b+(c*chunkSize);
-                    var cutset = offset+chunkSize;
-                    if(cutset>=fileSize){
-                        cutset = fileSize;
-                        breaked = true;
-                    }
+            var breaked = false;
+            for (var c=0;c<chunkNum;c++){
 
-                    var data = file.slice(offset,cutset);
-                    var reader = new FileReader();
-                    reader.readAsArrayBuffer(data);
+                offset = blockSize*b+(c*chunkSize);
+                var cutset = offset+chunkSize;
+                if(cutset>=fileSize){
+                    cutset = fileSize;
+                    breaked = true;
+                }
+                var data = file.slice(offset,cutset);
+                var reader = new FileReader();
+                reader.readAsArrayBuffer(data);
+                reader.b = b;
+                reader.c = c;
+                reader.data = data;
+                reader.onload = function(){
 
-                    reader.b = b;
-                    reader.c = c;
-                    reader.data = data;
-                    reader.onload = function(){
-    
-                        var formData = new FormData();
-                        formData.append("bucket", bucket);
-                        formData.append("path", path);
-                        formData.append("filename", file.name);
-                        formData.append("block", this.b);
-                        formData.append("chunk", this.c);
-                        formData.append("data", this.data);
-                        formData.append("size", fileSize);
-                        formData.append("block_ider", block);
-                        formData.append("chunk_size", chunkSize);
-                        formData.append("meta_size", blockSize >> 0x01 );
-    
-                        var h = sha256.hmac.create(decodeURIComponent(s3.GetCookie("s3_secret_key")));
-                        h.update(bucket);
-                        h.update(path);
-                        h.update(file.name);
-                        h.update(String(this.b));
-                        h.update(String(this.c));
-                        h.update(this.result);
-                        h.update(String(fileSize));
-                        h.update(String(block));
-                        h.update(String(chunkSize));
-    
-                        formData.append("sign", h.hex());
-   
-                        var this_block = this.b;
-                        var this_chunk = this.c;
-                        $.ajax({
-                        url: s3.baseUrl+"buk/multi-put?client_id="+
-                            s3.GetCookie("s3_client_id")+
-                            "&access_key="+s3.GetCookie("s3_access_key"),
-                        type:"post",
-                        async:false,
-                        processData: false,
-                        contentType: false,
-                        timeout: 10000,
-                        data: formData,
-                        success: (rsp) => {
+                    var formData = new FormData();
+                    formData.append("bucket", bucket);
+                    formData.append("path", path);
+                    formData.append("filename", file.name);
+                    formData.append("block", this.b);
+                    formData.append("chunk", this.c);
+                    formData.append("data", this.data);
+                    formData.append("size", fileSize);
+                    formData.append("block_ider", block);
+                    formData.append("chunk_size", chunkSize);
+                    formData.append("meta_size", blockSize >> 0x01 );
 
-                            if(rsp.kind!="MultiPutObject"){
-                                obj.find(".alert-msg").html(rsp.message);
-                                obj.find(".form-group").addClass("has-error");
-                                obj.find(".alert").removeClass("hidden");
-                                return;
-                            }
+                    var h = sha256.hmac.create(decodeURIComponent(s3.GetCookie("s3_secret_key")));
+                    h.update(bucket);
+                    h.update(path);
+                    h.update(file.name);
+                    h.update(String(this.b));
+                    h.update(String(this.c));
+                    h.update(this.result);
+                    h.update(String(fileSize));
+                    h.update(String(block));
+                    h.update(String(chunkSize));
 
-                            if((this_block*blockSize + (this_chunk+1)*chunkSize) >= fileSize){
-                                obj.find(".alert-msg").html("");
-                                obj.find(".form-group").removeClass("has-error");
-                                obj.find(".alert").addClass("hidden");
-                                obj.modal("hide");
+                    formData.append("sign", h.hex());
 
-                                s3.updating = false;
-                                obj.find(".modal-title").html("Update");
-                                obj.find(".btn-primary").attr("disabled", false);
-                            }
+                    var this_block = this.b;
+                    var this_chunk = this.c;
+                    $.ajax({
+                    url: s3.baseUrl+"buk/multi-put?client_id="+
+                        s3.GetCookie("s3_client_id")+
+                        "&access_key="+s3.GetCookie("s3_access_key"),
+                    type:"post",
+                    async:false,
+                    processData: false,
+                    contentType: false,
+                    timeout: 10000,
+                    data: formData,
+                    success: (rsp) => {
+                        if(rsp.kind!="MultiPutObject"){
+                            obj.find(".alert-msg").html(rsp.message);
+                            obj.find(".form-group").addClass("has-error");
+                            obj.find(".alert").removeClass("hidden");
+                            return;
                         }
-                        });
+                        if((this_block*blockSize + (this_chunk+1)*chunkSize) >= fileSize){
+                            obj.find(".alert-msg").html("");
+                            obj.find(".form-group").removeClass("has-error");
+                            obj.find(".alert").addClass("hidden");
+                            obj.modal("hide");
+                            s3.updating = false;
+                            obj.find(".modal-title").html("Update");
+                            obj.find(".btn-primary").attr("disabled", false);
+                        }
                     }
-
-                    if(breaked){
-                        break;
-                    }
+                    });
+                }
+                if(breaked){
+                    break;
                 }
             }
-
-            return false;
         }
     }
-
-    $.ajax({
-        url: s3.baseUrl+"buk/put?client_id="+
-             s3.GetCookie("s3_client_id")+
-            "&access_key="+s3.GetCookie("s3_access_key"),
-        type:"post",
-        async:false,
-        processData: false,
-        contentType: false,
-        timeout: 10000,
-        data: new FormData(obj.find("form")[0]),
-        success: (rsp) => {
-            if(rsp.kind=="PutObject"){
-                obj.find(".alert-msg").html("");
-                obj.find(".form-group").removeClass("has-error");
-                obj.find(".alert").addClass("hidden");
-                obj.modal("hide");
-                return;
-            }
-
-            obj.find(".alert-msg").html(rsp.message);
-            obj.find(".form-group").addClass("has-error");
-            obj.find(".alert").removeClass("hidden");
-        }
-    });
 
     s3.updating = false;
     obj.find(".modal-title").html("Update");
     obj.find(".btn-primary").attr("disabled", false);
     return false;
 }
-
 
 s3.ListObject = (bucket, path) => {
 
