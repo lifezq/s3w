@@ -125,6 +125,11 @@ s3.UpEvent = (bucket, path) => {
     $(".input_path").val(path);
     s3.updating = false;
     $("#uploadModal .btn-primary").attr("disabled", false);
+
+    if(navigator.userAgent.match(/AppleWebKit.*Mobile/)){
+        $("#object_file").attr("multiple", false);
+    }
+
     return false;
 }
 
